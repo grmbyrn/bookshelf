@@ -12,7 +12,7 @@ Build each feature as a thin slice through all three tiers: database table, then
 - **Deploy at the end of every phase.** Problems show up early, and you always have a working live version to show.
 - **Write the test with the feature.** Business rules (progress maths, who can share with whom) get unit tests; each route gets at least one API test.
 - **Log decisions as you go.** Add a line to the README's "Decisions & tradeoffs" section whenever you choose between two options.
-- **Backend layers.** Every feature follows routes → controllers → services → db. Business rules live only in services. Where a controller would do nothing but forward one call to one service, let the route call the service directly — a file that only passes things along is noise, not architecture.
+- **Backend layers.** Every feature follows routes → controllers → services → db, even when a controller is one line. Controllers handle HTTP (reading the request, cookies, status codes, the response); services hold the business rules and never see `req` or `res`.
 
 ## Phase 0: Finish the foundation
 
@@ -22,17 +22,17 @@ Done when `npm run dev` starts both apps, the health check returns "connected", 
 
 - [x] Create the `client` app with Vite and install its packages
 - [x] Confirm `/api/health` returns `{"status":"ok","database":"connected"}`
-- [ ] First commit and push to GitHub — check `git status` before `git add`, and make sure `.env` isn't listed
+- [x] First commit and push to GitHub — check `git status` before `git add`, and make sure `.env` isn't listed
 - [ ] Add `docker-compose.yml` for Postgres, so the database setup is in the repo rather than a remembered `docker run`
 
 **Backend structure**
 
-- [ ] Create the backend folders: `routes`, `controllers`, `services`, `db`, `middleware`
+- [x] Create the backend folders: `routes`, `controllers`, `services`, `db`, `middleware`
 - [ ] Split the app from the server: `src/app.ts` builds and exports the Express app, `src/index.ts` only calls `listen`. Supertest needs the app without a listening port, and retrofitting this later means touching every route file.
 - [ ] Add a central error handler so every error returns the same JSON shape, e.g. `{ "error": { "code", "message" } }`
 - [ ] Add a 404 handler beside it, so unknown routes return that shape instead of Express's HTML page
 - [ ] Add a `validate(schema)` middleware that checks request bodies with Zod and returns 400 on bad input
-- [ ] Replace `process.env.DATABASE_URL!` with an env module that parses `process.env` through Zod and fails loudly at startup. A missing variable should be one clear error, not a confusing crash inside the database driver.
+- [x] Replace `process.env.DATABASE_URL!` with an env module that parses `process.env` through Zod and fails loudly at startup. A missing variable should be one clear error, not a confusing crash inside the database driver.
 
 **Make CI possible**
 
@@ -45,8 +45,7 @@ Done when `npm run dev` starts both apps, the health check returns "connected", 
 **Ready to deploy**
 
 - [ ] Add server `build` (tsc) and `start` (node dist) scripts — `tsx watch` is dev-only — and pin the Node version with `engines`
-- [ ] Client: take the API base URL from `VITE_API_URL`, falling back to the dev proxy. The Vite proxy exists only in dev; in production the two apps are on different domains.
-- [ ] Server: set the production CORS origin, and work out the cross-domain cookie settings now (`SameSite=None; Secure`). Left until Phase 1, this shows up as a login that works locally and fails silently on the live site.
+- [ ] Make production look like one site, as the Vite proxy does in dev: have the frontend host forward `/api/*` to the API (a rewrite in `vercel.json`, or a rule in Netlify's `_redirects`). React keeps calling `/api/...` everywhere, and the login cookie stays first-party. Test this now: left until Phase 1, it shows up as a login that works locally and fails on the live site.
 - [ ] Decide how migrations run on deploy: `drizzle-kit migrate` as a release step, never by hand against production
 - [ ] Deploy: database on Neon, API on Render or Railway, client on Vercel or Netlify, with environment variables set on each host
 - [ ] Write the first README: what it is, how to run it locally, how to run the tests
@@ -59,7 +58,8 @@ Done when a user can register, log in, stay logged in after a refresh, and log o
 
 - [ ] Add a `sessions` table (id, user\_id, expires\_at)
 - [ ] `POST /api/auth/register`: validate, hash the password with argon2, create the user, start a session
-- [ ] `POST /api/auth/login`: check the password, create a session, set an httpOnly, secure, SameSite cookie
+- [ ] Lowercase and trim emails in the Zod schema on both register and login, so `Graeme@mail.com` and `graeme@mail.com` can't become two accounts
+- [ ] `POST /api/auth/login`: check the password, create a session, set an `httpOnly`, `secure`, `SameSite=Lax` cookie
 - [ ] `POST /api/auth/logout`: delete the session and clear the cookie
 - [ ] `GET /api/auth/me`: return the logged-in user, or 401
 - [ ] `requireAuth` middleware that loads the user from the cookie and puts it on the request
@@ -167,6 +167,7 @@ Done when two test accounts can become friends, one shares a book with a note, a
 **Friends (the smallest version that sharing needs)**
 
 - [ ] Add the `friendships` table: requester, addressee, status (pending, accepted)
+- [ ] Allow one friendship per pair in either direction: a unique index on (least(requester_id, addressee_id), greatest(requester_id, addressee_id)), so A→B and B→A can't both exist
 - [ ] Send a friend request by email address; accept or decline it
 - [ ] A Friends page listing friends and pending requests
 
@@ -204,7 +205,7 @@ Seven tables cover the whole MVP. Add each one in the phase that first needs it,
 | `books`         | id, source (openlibrary or manual), external\_id, title, authors, cover\_url, page\_count, published\_year, genre, description, created\_by | external\_id unique for Open Library books; created\_by set only for manual books | 3     |
 | `user_books`    | id, user\_id, book\_id, status (want, reading, read), current\_page, rating, is\_favorite, started\_at, finished\_at, updated\_at           | one row per user and book                                                         | 3     |
 | `reading_goals` | user\_id, year, target                                                                                                                      | one row per user and year                                                         | 6     |
-| `friendships`   | id, requester\_id, addressee\_id, status (pending, accepted), created\_at                                                                   | one row per pair of users                                                         | 8     |
+| `friendships`   | id, requester\_id, addressee\_id, status (pending, accepted), created\_at                                                                   | one row per pair of users, in either direction (unique index on the sorted pair)  | 8     |
 | `shares`        | id, sender\_id, recipient\_id, book\_id, note, status (new, added, dismissed), created\_at                                                  | sender and recipient must be friends                                              | 8     |
 
 The split between `books` and `user_books` matters: a book is stored once, and each user's progress and shelf live in their own row. Worth explaining in interviews.

@@ -28,10 +28,10 @@ Done when `npm run dev` starts both apps, the health check returns "connected", 
 **Backend structure**
 
 - [x] Create the backend folders: `routes`, `controllers`, `services`, `db`, `middleware`
-- [ ] Split the app from the server: `src/app.ts` builds and exports the Express app, `src/index.ts` only calls `listen`. Supertest needs the app without a listening port, and retrofitting this later means touching every route file.
-- [ ] Add a central error handler so every error returns the same JSON shape, e.g. `{ "error": { "code", "message" } }`
-- [ ] Add a 404 handler beside it, so unknown routes return that shape instead of Express's HTML page
-- [ ] Add a `validate(schema)` middleware that checks request bodies with Zod and returns 400 on bad input
+- [x] Split the app from the server: `src/app.ts` builds and exports the Express app, `src/index.ts` only calls `listen`. Supertest needs the app without a listening port, and retrofitting this later means touching every route file.
+- [x] Add a central error handler so every error returns the same JSON shape, e.g. `{ "error": { "code", "message" } }`
+- [x] Add a 404 handler beside it, so unknown routes return that shape instead of Express's HTML page
+- [x] Add a `validate(schema)` middleware that checks request bodies with Zod and returns 400 on bad input
 - [x] Replace `process.env.DATABASE_URL!` with an env module that parses `process.env` through Zod and fails loudly at startup. A missing variable should be one clear error, not a confusing crash inside the database driver.
 
 **Make CI possible**

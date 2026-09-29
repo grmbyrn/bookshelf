@@ -23,7 +23,7 @@ Done when `npm run dev` starts both apps, the health check returns "connected", 
 - [x] Create the `client` app with Vite and install its packages
 - [x] Confirm `/api/health` returns `{"status":"ok","database":"connected"}`
 - [x] First commit and push to GitHub — check `git status` before `git add`, and make sure `.env` isn't listed
-- [ ] Add `docker-compose.yml` for Postgres, so the database setup is in the repo rather than a remembered `docker run`
+- [x] Add `docker-compose.yml` for Postgres, so the database setup is in the repo rather than a remembered `docker run`
 
 **Backend structure**
 
@@ -44,11 +44,11 @@ Done when `npm run dev` starts both apps, the health check returns "connected", 
 
 **Ready to deploy**
 
-- [ ] Add server `build` (tsc) and `start` (node dist) scripts — `tsx watch` is dev-only — and pin the Node version with `engines`
+- [x] Add server `build` (tsc) and `start` (node dist) scripts — `tsx watch` is dev-only — and pin the Node version with `engines`
 - [ ] Make production look like one site, as the Vite proxy does in dev: have the frontend host forward `/api/*` to the API (a rewrite in `vercel.json`, or a rule in Netlify's `_redirects`). React keeps calling `/api/...` everywhere, and the login cookie stays first-party. Test this now: left until Phase 1, it shows up as a login that works locally and fails on the live site.
 - [ ] Decide how migrations run on deploy: `drizzle-kit migrate` as a release step, never by hand against production
 - [ ] Deploy: database on Neon, API on Render or Railway, client on Vercel or Netlify, with environment variables set on each host
-- [ ] Write the first README: what it is, how to run it locally, how to run the tests
+- [x] Write the first README: what it is, how to run it locally, how to run the tests
 
 ## Phase 1: Accounts and login
 

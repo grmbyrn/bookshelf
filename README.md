@@ -14,19 +14,19 @@ Work in progress — see [ROADMAP.md](ROADMAP.md).
 Requires Node 22+ and Docker.
 
 ```bash
-# 1. Start Postgres
-docker run -d --name bookshelf-db \
-  -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=bookshelf \
-  -p 5432:5432 postgres:17
+# 1. Start Postgres (creates the bookshelf and bookshelf_test databases)
+docker compose up -d
 
 # 2. Install dependencies (from the repo root)
 npm install
 
 # 3. Configure the server
 cp server/.env.example server/.env
+cp server/.env.test.example server/.env.test
 
 # 4. Create the database tables
 npm run db:migrate -w server
+cd server && DATABASE_URL=postgres://postgres:postgres@localhost:5432/bookshelf_test npm run db:migrate && cd ..
 
 # 5. Start both apps
 npm run dev

@@ -36,11 +36,11 @@ Done when `npm run dev` starts both apps, the health check returns "connected", 
 
 **Make CI possible**
 
-- [ ] Add ESLint to the server (the client already has one from the Vite template) and a Prettier config file
-- [ ] Add root `lint`, `typecheck` and `test` scripts — the current `test` is still the `npm init` stub that always exits 1
-- [ ] Decide how tests get a database: a separate `bookshelf_test` database, reset between runs. Write the choice in the README.
-- [ ] Write one API test against `/api/health` — `vitest` exits non-zero when it finds no test files, so CI needs something real to run
-- [ ] Add GitHub Actions to run lint, type-check and tests on every push, with a Postgres service container for the API tests
+- [x] Add ESLint to the server (the client already has one from the Vite template) and a Prettier config file
+- [x] Add root `lint`, `typecheck` and `test` scripts — the current `test` is still the `npm init` stub that always exits 1
+- [x] Decide how tests get a database: a separate `bookshelf_test` database, reset between runs. Write the choice in the README.
+- [x] Write one API test against `/api/health` — `vitest` exits non-zero when it finds no test files, so CI needs something real to run
+- [x] Add GitHub Actions to run lint, type-check and tests on every push, with a Postgres service container for the API tests
 
 **Ready to deploy**
 

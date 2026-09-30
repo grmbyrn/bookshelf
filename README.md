@@ -3,6 +3,10 @@
 A reading tracker: search for books, shelve them, track progress toward a yearly goal.
 Work in progress — see [ROADMAP.md](ROADMAP.md).
 
+**Live:** https://bookshelf-five-topaz.vercel.app · **API:** https://bookshelf-ne4f.onrender.com/api/health
+
+> The API is on Render's free tier and sleeps after 15 minutes idle — the first request can take ~50s.
+
 ## Stack
 
 - **Client** — React 19, TypeScript, Vite, TanStack Query, React Router, React Hook Form + Zod

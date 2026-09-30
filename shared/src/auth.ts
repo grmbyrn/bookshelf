@@ -17,7 +17,7 @@ export const passwordRules = [
   {
     id: "variety",
     label: "One number or symbol",
-    test: (value: string) => /[^A-Za-z]/.test(value),
+    test: (value: string) => /[\p{N}\p{P}\p{S}]/u.test(value),
   },
 ] as const;
 

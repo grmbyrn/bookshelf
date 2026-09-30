@@ -56,6 +56,22 @@ describe("registerSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("rejects a password whose only non-letter is an accent", () => {
+    const result = registerSchema.safeParse({
+      ...validRegistration,
+      password: "réadingg"
+    });
+    expect(result.success).toBe(false)
+  });
+
+  it("rejects a password with a trailing white space", () => {
+    const result = registerSchema.safeParse({
+      ...validRegistration,
+      password: "reading "
+    });
+    expect(result.success).toBe(false)
+  });
+
   it("accepts a password satisfied by a symbol rather than a number", () => {
     const result = registerSchema.safeParse({
       ...validRegistration,

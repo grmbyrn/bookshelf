@@ -47,3 +47,6 @@ Check it's working: `curl http://localhost:3001/api/health → {"status":"ok","d
 - `shared` compiles to `dist` over exporting TypeScript source — the server builds with `tsc` and `rootDir: src`, so importing source across the workspace boundary escapes `rootDir` and breaks the production build on Render rather than locally.
 - `shared` builds through npm's `prepare` hook over an explicit build step — `npm ci` runs it automatically, so there is one command to forget on Render and in CI instead of two.
 - Login validates only that a password was entered, not the register rules — rules change over time, and enforcing today's rules at login would lock out an account whose password predates them.
+- Tests truncate between cases rather than rolling back a transaction — Supertest drives the real app, which takes its own connection from the pool, so a transaction opened in the test would be invisible to the code under test.
+- The reset discovers tables from `pg_tables` rather than a hardcoded list, and refuses any database whose name doesn't end in `_test` — Drizzle's migration ledger lives in a separate schema, so it's excluded for free.
+- Vitest runs test files serially (`fileParallelism: false`) — one test database shared by every file means parallel files would truncate each other mid-test.

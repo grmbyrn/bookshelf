@@ -47,6 +47,9 @@ cd server && DATABASE_URL=postgres://postgres:postgres@localhost:5432/bookshelf_
   `req.body`. Schemas shared with the client belong in `shared/`.
 - **Unused parameters are prefixed `_`** (`_req`, `_res`, `_next`) — ESLint is configured for it.
 - **Tests sit beside the code** they test: `routes/health.ts`, `routes/health.test.ts`.
+- **Tests that write to the database** call `beforeEach(resetDb)` from
+  `src/test/resetDb.ts`. Read-only tests don't need it, and the guard's own
+  tests must stay database-free.
 - **Close the pool** in tests (`afterAll(() => pool.end())`) or Vitest hangs after passing.
 
 ## Things that have already bitten us

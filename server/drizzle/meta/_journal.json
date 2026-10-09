@@ -15,6 +15,13 @@
       "when": 1790358191623,
       "tag": "0001_marvelous_daimon_hellstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791472062334,
+      "tag": "0002_ambitious_jamie_braddock",
+      "breakpoints": true
     }
   ]
 }

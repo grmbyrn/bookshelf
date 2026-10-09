@@ -56,7 +56,7 @@ Done when a user can register, log in, stay logged in after a refresh, and log o
 
 **Backend**
 
-- [ ] Add a `sessions` table (id, user\_id, expires\_at)
+- [x] Add a `sessions` table (id, user\_id, expires\_at)
 - [ ] `POST /api/auth/register`: validate, hash the password with argon2, create the user, start a session
 - [x] Lowercase and trim emails in the Zod schema on both register and login, so `Graeme@mail.com` and `graeme@mail.com` can't become two accounts
 - [ ] `POST /api/auth/login`: check the password, create a session, set an `httpOnly`, `secure`, `SameSite=Lax` cookie
